@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">KinoplexAndroid</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="input_hint">Input</string>
+    <string name="hint_user">User</string>
+    <string name="hint_pass">Password</string>
+    <string name="hint_host">Host</string>
+    <string-array name="tab_texts">
+        <item>Chat</item>
+        <item>Users</item>
+        <item>Playlist</item>
+    </string-array>
+    <string-array name="slide_texts">
+        <item>Welcome to Kinoplex!</item>
+        <item>There are currently no users.</item>
+        <item>The playlist is currently empty.</item>
+    </string-array>
+</resources>
