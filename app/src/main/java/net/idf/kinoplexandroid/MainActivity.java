@@ -1,8 +1,11 @@
 package net.idf.kinoplexandroid;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,11 +25,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        String url = "ws://" + hostText.getText().toString();
+        String url = "ws://" + hostText.getText().toString() + "/ws";
         String name = userText.getText().toString();
         String pass = passwordText.getText().toString();
 
         WsClient wsClient = new WsClient(url, name, pass, this);
         wsClient.start();
+    }
+
+    public static void switchToKino(Activity ctx) {
+        ctx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ctx, "Logged in successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ctx, KinoActivity.class);
+                ctx.startActivity(intent);
+            }
+        });
+    }
+
+    public static void showError(String reason, Activity ctx) {
+        ctx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ctx, "Error: " + reason, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

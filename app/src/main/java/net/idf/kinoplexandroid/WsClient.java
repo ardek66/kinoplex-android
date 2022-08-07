@@ -10,27 +10,33 @@ public class WsClient {
     private final OkHttpClient client = new OkHttpClient();
 
     private WebSocket ws;
-    private final Activity activity;
+    private Activity ctx;
     private final String host;
     private final String user;
     private final String pass;
-    public boolean auth = false;
+    private boolean auth;
 
-    WsClient(String host, String user, String pass, Activity activity) {
+    WsClient(String host, String user, String pass, Activity ctx) {
+        this.auth = false;
         this.host = host;
         this.user = user;
         this.pass = pass;
-        this.activity = activity;
+        this.ctx = ctx;
     }
 
     public void start() {
         System.out.println("Starting");
         Request request = new Request.Builder().url(host).build();
-        WsAuthListener authListener = WsAuthListener.newAuthListener(this);
+        WsListener listener = WsListener.newWsListener(this);
         System.out.println("Listening");
-        ws = client.newWebSocket(request, authListener);
-        System.out.println("Closing");
+        ws = client.newWebSocket(request, listener);
         client.dispatcher().executorService().shutdown();
+        System.out.println("Closing");
+    }
+
+    public void close() {
+        ws.close(1000, "Disconnect");
+        auth = false;
     }
 
     public String getUser() {
@@ -45,7 +51,19 @@ public class WsClient {
         return ws;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public boolean isAuth() {
+        return auth;
+    }
+
+    public void setAuth(boolean auth) {
+        this.auth = auth;
+    }
+
+    public Activity getContext() {
+        return ctx;
+    }
+
+    public void setContext(Activity ctx) {
+        this.ctx = ctx;
     }
 }
