@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private WsClient client;
     private EditText hostText;
     private EditText userText;
     private EditText passwordText;
@@ -29,8 +30,11 @@ public class MainActivity extends AppCompatActivity {
         String name = userText.getText().toString();
         String pass = passwordText.getText().toString();
 
-        WsClient wsClient = new WsClient(url, name, pass, this);
-        wsClient.start();
+        client = new WsClient(url, name, pass);
+        WsListener listener = WsListener.newWsListener(client, this);
+        client.setListener(listener);
+        KinoClient.setClient(client);
+        KinoClient.start();
     }
 
     public static void switchToKino(Activity ctx) {

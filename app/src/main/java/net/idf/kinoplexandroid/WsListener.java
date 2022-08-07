@@ -1,5 +1,7 @@
 package net.idf.kinoplexandroid;
 
+import android.app.Activity;
+
 import com.google.gson.Gson;
 
 import okhttp3.Response;
@@ -9,10 +11,12 @@ import okhttp3.WebSocketListener;
 public class WsListener extends WebSocketListener {
     private final Gson gson = new Gson();
     private WsClient client;
+    private Activity ctx;
 
-    public static WsListener newWsListener(WsClient client) {
+    public static WsListener newWsListener(WsClient client, Activity ctx) {
         WsListener wsAuthListener = new WsListener();
         wsAuthListener.client = client;
+        wsAuthListener.ctx = ctx;
 
         return wsAuthListener;
     }
@@ -26,24 +30,24 @@ public class WsListener extends WebSocketListener {
         ws.send(json);
     }
 
-    private void handleAuth(WsClient client, Protocol resp) {
+    private void handleAuth(Protocol resp) {
         switch (resp.kind) {
             case "Joined":
                 if (resp.joName.equals(client.getUser())) {
                     client.setAuth(true);
-                    MainActivity.switchToKino(client.getContext());
+                    MainActivity.switchToKino(ctx);
                     break;
                 }
             case "Error":
                 client.close();
-                MainActivity.showError(resp.reason, client.getContext());
+                MainActivity.showError(resp.reason, ctx);
                 break;
             default:
                 break;
         }
     }
 
-    public void handleMain(WsClient client, Protocol resp) {
+    public void handleMain(Protocol resp) {
         System.out.println(resp.kind);
     }
 
@@ -53,9 +57,9 @@ public class WsListener extends WebSocketListener {
         System.out.println(resp.kind);
 
         if (client.isAuth()) {
-            handleMain(client, resp);
+            handleMain(resp);
         } else {
-            handleAuth(client, resp);
+            handleAuth(resp);
         }
     }
 

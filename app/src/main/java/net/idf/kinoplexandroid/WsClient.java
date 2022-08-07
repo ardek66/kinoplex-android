@@ -1,7 +1,5 @@
 package net.idf.kinoplexandroid;
 
-import android.app.Activity;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
@@ -10,28 +8,17 @@ public class WsClient {
     private final OkHttpClient client = new OkHttpClient();
 
     private WebSocket ws;
-    private Activity ctx;
+    private WsListener listener;
     private final String host;
     private final String user;
     private final String pass;
     private boolean auth;
 
-    WsClient(String host, String user, String pass, Activity ctx) {
+    WsClient(String host, String user, String pass) {
         this.auth = false;
         this.host = host;
         this.user = user;
         this.pass = pass;
-        this.ctx = ctx;
-    }
-
-    public void start() {
-        System.out.println("Starting");
-        Request request = new Request.Builder().url(host).build();
-        WsListener listener = WsListener.newWsListener(this);
-        System.out.println("Listening");
-        ws = client.newWebSocket(request, listener);
-        client.dispatcher().executorService().shutdown();
-        System.out.println("Closing");
     }
 
     public void close() {
@@ -47,10 +34,6 @@ public class WsClient {
         return pass;
     }
 
-    public WebSocket getWs() {
-        return ws;
-    }
-
     public boolean isAuth() {
         return auth;
     }
@@ -59,11 +42,23 @@ public class WsClient {
         this.auth = auth;
     }
 
-    public Activity getContext() {
-        return ctx;
+    public void setListener(WsListener listener) {
+        this.listener = listener;
     }
 
-    public void setContext(Activity ctx) {
-        this.ctx = ctx;
+    public String getHost() {
+        return host;
+    }
+
+    public WsListener getListener() {
+        return listener;
+    }
+
+    public void newWebSocket(Request request, WsListener listener) {
+        ws = client.newWebSocket(request, listener);
+    }
+
+    public void dispatch() {
+        client.dispatcher().executorService().shutdown();
     }
 }
